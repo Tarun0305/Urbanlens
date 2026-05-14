@@ -3,7 +3,7 @@ import axios from "axios";
 const envUrl = import.meta.env.VITE_API_URL?.trim();
 export const BASE_URL =
   envUrl ||
-  (import.meta.env.DEV ? "" : "https://urbanlens.railway.app");
+  (import.meta.env.DEV ? "http://127.0.0.1:8000" : "https://urbanlens.railway.app");
 
 export const api = axios.create({
   baseURL: BASE_URL || undefined,
