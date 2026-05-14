@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+sqlalchemy
+email-validator
+python-jose[cryptography]
+bcrypt
+python-multipart
+aiofiles
+httpx
+pillow
+openai
+python-dotenv
