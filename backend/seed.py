@@ -45,7 +45,7 @@ def run():
                     full_name=full_name,
                     email=email,
                     phone=phone,
-                    password_hash=get_password_hash("password123" if email != "admin@urbanlens.com" else "admin123"),
+                    password_hash=get_password_hash("password123" if email != "admin@urbanlens.com" else "Admin@123"),
                     role=role,
                     language="en",
                     is_approved=True,

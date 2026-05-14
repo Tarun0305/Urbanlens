@@ -22,8 +22,22 @@ export default function Register() {
   });
   const [busy, setBusy] = useState(false);
 
+  const validatePassword = (pass: string) => {
+    const hasCapital = /[A-Z]/.test(pass);
+    const hasNumber = /[0-9]/.test(pass);
+    const hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(pass);
+    const isLongEnough = pass.length >= 8;
+    return hasCapital && hasNumber && hasSymbol && isLongEnough;
+  };
+
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validatePassword(form.password)) {
+      toast.error("Password must be at least 8 characters and contain a Capital letter, a Number, and a Special symbol.");
+      return;
+    }
+
     setBusy(true);
     try {
       await register(form);
@@ -37,7 +51,12 @@ export default function Register() {
       navigate("/login");
     } catch (err: any) {
       const msg = err.response?.data?.detail || t("error_generic");
-      toast.error(msg);
+      // Specific check for existing user
+      if (msg.toLowerCase().includes("already registered") || msg.toLowerCase().includes("already exists")) {
+        toast.error("An account with this email already exists. Please login instead.");
+      } else {
+        toast.error(msg);
+      }
     } finally {
       setBusy(false);
     }
