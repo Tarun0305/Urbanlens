@@ -1,6 +1,5 @@
 import axios from "axios";
 
-const envUrl = import.meta.env.VITE_API_URL?.trim();
 export const BASE_URL = "https://urbanlens-techno.railway.app";
 
 export const api = axios.create({
