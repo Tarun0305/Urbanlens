@@ -18,8 +18,10 @@ class UserPublic(BaseModel):
     language: str
     points: int
     rating: float
+    achievements: Optional[str] = None
     avatar_url: Optional[str] = None
     is_active: bool
+    is_approved: bool
     created_at: datetime
 
     class Config:
@@ -43,6 +45,7 @@ class RegisterIn(BaseModel):
     password: str
     role: str = "citizen"
     language: str = "en"
+    achievements: Optional[str] = None
 
 
 class ReportCreateIn(BaseModel):

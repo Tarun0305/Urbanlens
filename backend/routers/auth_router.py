@@ -25,6 +25,11 @@ def register(payload: RegisterIn, db: Session = Depends(get_db)):
     allowed_roles = {"citizen", "municipal", "contractor", "admin"}
     role = payload.role if payload.role in allowed_roles else "citizen"
     lang = payload.language if payload.language in {"en", "kn", "hi"} else "en"
+    # Approval logic: Citizen and Admin are pre-approved. Municipal and Contractor need approval.
+    is_approved = True
+    if role in {"municipal", "contractor"}:
+        is_approved = False
+
     user = User(
         full_name=payload.full_name,
         email=payload.email,
@@ -32,6 +37,8 @@ def register(payload: RegisterIn, db: Session = Depends(get_db)):
         password_hash=get_password_hash(payload.password),
         role=role,
         language=lang,
+        achievements=payload.achievements,
+        is_approved=is_approved,
     )
     db.add(user)
     db.commit()
@@ -47,6 +54,18 @@ def login(payload: LoginIn, db: Session = Depends(get_db)):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password",
         )
+    
+    if not user.is_approved:
+        role_map = {
+            "municipal": "Municipal Authority approval pending. Please contact Admin.",
+            "contractor": "Contractor approval pending. Please contact Municipal Authority."
+        }
+        detail = role_map.get(user.role, "Account pending approval.")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=detail,
+        )
+
     token = create_access_token({"sub": user.email})
     return LoginOut(token=token, user=user)
 

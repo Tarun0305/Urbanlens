@@ -1,26 +1,30 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import toast from "react-hot-toast";
 import { fetchContractorReviews } from "../../api/reviews";
-import { fetchLeaderboard, type LeaderboardRow } from "../../api/users";
+import { fetchUsers, approveUser, type User } from "../../api/users";
 
 export default function ContractorBoard() {
   const { t } = useTranslation();
-  const [rows, setRows] = useState<LeaderboardRow[]>([]);
-  const [open, setOpen] = useState<LeaderboardRow | null>(null);
+  const [rows, setRows] = useState<User[]>([]);
+  const [tab, setTab] = useState<"active" | "pending">("active");
+  const [open, setOpen] = useState<User | null>(null);
   const [reviews, setReviews] = useState<
     Awaited<ReturnType<typeof fetchContractorReviews>>
   >([]);
 
+  const load = async () => {
+    try {
+      const data = await fetchUsers({ role: "contractor" });
+      setRows(data);
+    } catch {
+      setRows([]);
+    }
+  };
+
   useEffect(() => {
-    void (async () => {
-      try {
-        const data = await fetchLeaderboard(50);
-        setRows(data);
-      } catch {
-        setRows([]);
-      }
-    })();
+    void load();
   }, []);
 
   useEffect(() => {
@@ -35,10 +39,18 @@ export default function ContractorBoard() {
     })();
   }, [open]);
 
-  const avgSpeedDays = (row: LeaderboardRow) => {
-    const base = 10 - Math.min(9, row.jobs_completed / 5);
-    return `${base.toFixed(1)}d`;
+  const approve = async (e: React.MouseEvent, u: User) => {
+    e.stopPropagation();
+    try {
+      await approveUser(u.id);
+      toast.success("Contractor approved");
+      await load();
+    } catch {
+      toast.error(t("error_generic"));
+    }
   };
+
+  const filtered = rows.filter(r => tab === "active" ? r.is_approved : !r.is_approved);
 
   return (
     <div className="space-y-6">
@@ -47,35 +59,79 @@ export default function ContractorBoard() {
           {t("contractor_board")}
         </h1>
         <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
-          Ranked by blended ratings and throughput. Click a row for full review history.
+          Manage and approve contractors for urban projects.
         </p>
+      </div>
+
+      <div className="flex gap-2">
+        <button
+          onClick={() => setTab("active")}
+          className={`rounded-full px-4 py-2 text-xs font-black uppercase tracking-widest ${
+            tab === "active"
+              ? "bg-primary text-white"
+              : "border border-slate-200 bg-white/70 dark:border-white/10 dark:bg-slate-950/60 dark:text-white"
+          }`}
+        >
+          Active
+        </button>
+        <button
+          onClick={() => setTab("pending")}
+          className={`relative rounded-full px-4 py-2 text-xs font-black uppercase tracking-widest ${
+            tab === "pending"
+              ? "bg-primary text-white"
+              : "border border-slate-200 bg-white/70 dark:border-white/10 dark:bg-slate-950/60 dark:text-white"
+          }`}
+        >
+          Pending
+          {rows.filter(r => !r.is_approved).length > 0 && (
+            <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-danger text-[10px] text-white">
+              {rows.filter(r => !r.is_approved).length}
+            </span>
+          )}
+        </button>
       </div>
 
       <div className="overflow-hidden rounded-[2rem] border border-white/20 bg-white/70 shadow-xl backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/60">
         <table className="w-full text-left text-sm">
           <thead className="bg-slate-900 text-white">
             <tr>
-              <th className="px-4 py-3">Rank</th>
               <th className="px-4 py-3">Name</th>
               <th className="px-4 py-3">Rating</th>
-              <th className="px-4 py-3">Jobs</th>
-              <th className="px-4 py-3">Avg speed</th>
+              <th className="px-4 py-3">Phone</th>
+              <th className="px-4 py-3">{t("actions")}</th>
             </tr>
           </thead>
           <tbody>
-            {rows.map((r) => (
+            {filtered.map((r) => (
               <tr
                 key={r.id}
                 className="cursor-pointer border-t border-slate-100 hover:bg-primary/5 dark:border-white/5"
                 onClick={() => setOpen(r)}
               >
-                <td className="px-4 py-3 font-black text-primary">#{r.rank}</td>
                 <td className="px-4 py-3 font-bold">{r.full_name}</td>
-                <td className="px-4 py-3">★ {r.rating_display.toFixed(1)}</td>
-                <td className="px-4 py-3">{r.jobs_completed}</td>
-                <td className="px-4 py-3">{avgSpeedDays(r)}</td>
+                <td className="px-4 py-3">★ {r.rating.toFixed(1)}</td>
+                <td className="px-4 py-3">{r.phone}</td>
+                <td className="px-4 py-3">
+                  {tab === "pending" ? (
+                    <button
+                      onClick={(e) => void approve(e, r)}
+                      className="rounded-full bg-success px-3 py-1 text-xs font-black text-white shadow-lg shadow-success/30"
+                    >
+                      Approve
+                    </button>
+                  ) : (
+                    <span className="text-xs font-black text-primary uppercase">View Profile</span>
+                  )}
+                </td>
               </tr>
             ))}
+            {filtered.length === 0 && (
+              <tr>
+                <td colSpan={4} className="px-4 py-8 text-center text-slate-500">
+                  No {tab} contractors found.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
@@ -111,6 +167,15 @@ export default function ContractorBoard() {
                   {t("close")}
                 </button>
               </div>
+
+              {open.achievements && (
+                <div className="mt-6 rounded-2xl bg-primary/5 p-4 border border-primary/10">
+                  <div className="text-xs font-black uppercase text-primary">Achievements & Experience</div>
+                  <div className="mt-1 text-sm text-slate-700 dark:text-slate-200 whitespace-pre-wrap">
+                    {open.achievements}
+                  </div>
+                </div>
+              )}
               <div className="mt-4 space-y-3">
                 {reviews.map((rv) => (
                   <div

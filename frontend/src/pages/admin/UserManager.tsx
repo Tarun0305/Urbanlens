@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import {
+  approveUser,
   createUser,
   deactivateUser,
   fetchUsers,
@@ -100,6 +101,16 @@ export default function UserManager() {
     }
   };
 
+  const approve = async (u: User) => {
+    try {
+      await approveUser(u.id);
+      toast.success("User approved");
+      await load();
+    } catch {
+      toast.error(t("error_generic"));
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -107,8 +118,7 @@ export default function UserManager() {
           {t("user_manager")}
         </h1>
         <p className="mt-2 max-w-3xl text-sm text-slate-600 dark:text-slate-300">
-          Municipal officers transfer every five years — update roles here to keep access aligned
-          with the org chart.
+          Approve new Municipal registrations and manage roles.
         </p>
       </div>
 
@@ -169,13 +179,27 @@ export default function UserManager() {
           <tbody>
             {filtered.map((u) => (
               <tr key={u.id} className="border-t border-slate-100 dark:border-white/5">
-                <td className="px-4 py-3 font-bold">{u.full_name}</td>
+                <td className="px-4 py-3">
+                  <div className="font-bold">{u.full_name}</div>
+                  {!u.is_approved && (
+                    <span className="text-[10px] font-black uppercase text-warning">Pending Approval</span>
+                  )}
+                </td>
                 <td className="px-4 py-3">{u.email}</td>
                 <td className="px-4 py-3">{u.phone}</td>
                 <td className="px-4 py-3">{u.role}</td>
                 <td className="px-4 py-3">{u.is_active ? t("active") : t("inactive")}</td>
                 <td className="px-4 py-3">
                   <div className="flex flex-wrap gap-2">
+                    {!u.is_approved && (
+                      <button
+                        type="button"
+                        className="rounded-full bg-success/10 px-3 py-1 text-xs font-black text-success"
+                        onClick={() => void approve(u)}
+                      >
+                        Approve
+                      </button>
+                    )}
                     <button
                       type="button"
                       className="rounded-full bg-primary/10 px-3 py-1 text-xs font-black text-primary"

@@ -34,6 +34,7 @@ def run():
                 "contractor",
             ),
             ("Tarun Admin", "tarun.admin@test.com", "+919900000004", "admin"),
+            ("Main Admin", "admin@urbanlens.com", "+911234567890", "admin"),
         ]
         for full_name, email, phone, role in users:
             existing = db.query(User).filter(User.email == email).first()
@@ -44,9 +45,10 @@ def run():
                     full_name=full_name,
                     email=email,
                     phone=phone,
-                    password_hash=get_password_hash("password123"),
+                    password_hash=get_password_hash("password123" if email != "admin@urbanlens.com" else "admin123"),
                     role=role,
                     language="en",
+                    is_approved=True,
                 )
             )
         db.commit()

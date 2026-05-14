@@ -4,7 +4,12 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from ..auth import get_password_hash, get_user_by_email, require_roles
+from ..auth import (
+    get_current_user,
+    get_password_hash,
+    get_user_by_email,
+    require_roles,
+)
 from ..database import get_db
 from ..models import Report, Review, User
 from ..schemas import UserAdminCreateIn, UserAdminUpdateIn, UserPublic
@@ -90,6 +95,34 @@ def admin_deactivate(
     if not u:
         raise HTTPException(status_code=404, detail="User not found")
     u.is_active = False
+    db.commit()
+    db.refresh(u)
+    return u
+
+
+@router.patch("/{user_id}/approve", response_model=UserPublic)
+def approve_user(
+    user_id: int,
+    db: Session = Depends(get_db),
+    current: User = Depends(get_current_user),
+):
+    u = db.query(User).filter(User.id == user_id).first()
+    if not u:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Admin can approve anyone (mainly Municipal)
+    # Municipal can only approve Contractors
+    if current.role == "admin":
+        pass
+    elif current.role == "municipal" and u.role == "contractor":
+        pass
+    else:
+        raise HTTPException(
+            status_code=403,
+            detail="You do not have permission to approve this user",
+        )
+    
+    u.is_approved = True
     db.commit()
     db.refresh(u)
     return u

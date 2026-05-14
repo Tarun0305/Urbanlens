@@ -1,17 +1,16 @@
-import { useEffect, useMemo, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import { login } from "../api/auth";
 import { useAuthStore } from "../store/authStore";
 
-const presets: Record<string, { email: string }> = {
-  citizen: { email: "tarun.citizen@test.com" },
-  municipal: { email: "tarun.municipal@test.com" },
-  contractor: { email: "tarun.contractor@test.com" },
-  admin: { email: "tarun.admin@test.com" },
-};
+const roles = [
+  { id: "citizen", label: "Reporter" },
+  { id: "municipal", label: "Municipal Authority" },
+  { id: "contractor", label: "Contractor" },
+  { id: "admin", label: "Admin" },
+];
 
 function homeForRole(role: string) {
   if (role === "citizen") return "/citizen/dashboard";
@@ -24,18 +23,12 @@ function homeForRole(role: string) {
 export default function Login() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [params] = useSearchParams();
-  const preset = params.get("preset") || "";
-  const initialEmail = useMemo(() => presets[preset]?.email || "", [preset]);
 
-  const [email, setEmail] = useState(initialEmail);
-  const [password, setPassword] = useState("password123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("citizen");
   const [busy, setBusy] = useState(false);
   const setAuth = useAuthStore((s) => s.setAuth);
-
-  useEffect(() => {
-    setEmail(initialEmail);
-  }, [initialEmail]);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,8 +38,9 @@ export default function Login() {
       setAuth(data.token, data.user);
       toast.success(`Welcome back, ${data.user.full_name}`);
       navigate(homeForRole(data.user.role), { replace: true });
-    } catch {
-      toast.error(t("error_generic"));
+    } catch (err: any) {
+      const msg = err.response?.data?.detail || t("error_generic");
+      toast.error(msg);
     } finally {
       setBusy(false);
     }
@@ -65,7 +59,24 @@ export default function Login() {
             {t("login")}
           </div>
           <div className="mt-2 text-sm text-slate-600 dark:text-slate-300">
-            Role is detected automatically from your account.
+            Select your role to login or create a new account.
+          </div>
+
+          <div className="mt-6 flex flex-wrap gap-2">
+            {roles.map((r) => (
+              <button
+                key={r.id}
+                type="button"
+                onClick={() => setRole(r.id)}
+                className={`rounded-full px-4 py-2 text-[10px] font-black uppercase tracking-widest transition ${
+                  role === r.id
+                    ? "bg-primary text-white shadow-lg shadow-primary/30"
+                    : "border border-slate-200 bg-white/50 text-slate-500 hover:border-primary/40 dark:border-white/10 dark:bg-slate-900/50"
+                }`}
+              >
+                {r.label}
+              </button>
+            ))}
           </div>
 
           <form onSubmit={onSubmit} className="mt-8 space-y-4">
@@ -78,6 +89,7 @@ export default function Login() {
                 onChange={(e) => setEmail(e.target.value)}
                 className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm outline-none ring-primary/30 focus:ring-4 dark:border-white/10 dark:bg-slate-950 dark:text-white"
                 autoComplete="email"
+                placeholder={`Email for ${roles.find((r) => r.id === role)?.label}`}
               />
             </div>
             <div>
@@ -90,29 +102,26 @@ export default function Login() {
                 type="password"
                 className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm outline-none ring-primary/30 focus:ring-4 dark:border-white/10 dark:bg-slate-950 dark:text-white"
                 autoComplete="current-password"
+                placeholder="••••••••"
               />
             </div>
-            <button
-              type="submit"
-              disabled={busy}
-              className="w-full rounded-2xl bg-gradient-to-r from-primary to-accent py-3 text-sm font-black text-white shadow-lg shadow-primary/30 transition enabled:hover:brightness-110 disabled:opacity-60"
-            >
-              {busy ? t("loading") : t("login")}
-            </button>
-          </form>
 
-          <div className="mt-6 grid grid-cols-2 gap-2">
-            {Object.keys(presets).map((k) => (
-              <button
-                key={k}
-                type="button"
-                onClick={() => setEmail(presets[k].email)}
-                className="rounded-xl border border-slate-200 bg-white/70 px-3 py-2 text-xs font-extrabold text-slate-800 hover:border-primary/40 dark:border-white/10 dark:bg-slate-900/60 dark:text-slate-100"
+            <div className="grid grid-cols-2 gap-3 pt-2">
+              <Link
+                to={`/register?role=${role}`}
+                className="flex items-center justify-center rounded-2xl border border-primary/40 bg-white/50 py-3 text-sm font-black text-primary transition hover:bg-primary hover:text-white dark:border-white/10 dark:bg-slate-900/50"
               >
-                Use {k} demo
+                {t("register")}
+              </Link>
+              <button
+                type="submit"
+                disabled={busy}
+                className="rounded-2xl bg-gradient-to-r from-primary to-accent py-3 text-sm font-black text-white shadow-lg shadow-primary/30 transition enabled:hover:brightness-110 disabled:opacity-60"
+              >
+                {busy ? t("loading") : t("login")}
               </button>
-            ))}
-          </div>
+            </div>
+          </form>
         </div>
       </motion.div>
     </div>

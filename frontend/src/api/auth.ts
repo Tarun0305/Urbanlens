@@ -13,6 +13,8 @@ export interface User {
   rating: number;
   avatar_url: string | null;
   is_active: boolean;
+  is_approved: boolean;
+  achievements?: string;
   created_at: string;
 }
 
@@ -31,6 +33,7 @@ export async function register(payload: {
   password: string;
   role: UserRole;
   language: string;
+  achievements?: string;
 }) {
   const { data } = await api.post<User>("/api/auth/register", payload);
   return data;

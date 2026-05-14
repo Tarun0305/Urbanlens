@@ -36,6 +36,11 @@ export async function deactivateUser(id: number) {
   return data;
 }
 
+export async function approveUser(id: number) {
+  const { data } = await api.patch<User>(`/api/users/${id}/approve`);
+  return data;
+}
+
 export interface LeaderboardRow {
   id: number;
   full_name: string;

@@ -27,8 +27,10 @@ class User(Base):
     language = Column(String(8), nullable=False, default="en")
     points = Column(Integer, nullable=False, default=0)
     rating = Column(Float, nullable=False, default=5.0)
+    achievements = Column(Text, nullable=True)
     avatar_url = Column(String(512), nullable=True)
     is_active = Column(Boolean, nullable=False, default=True)
+    is_approved = Column(Boolean, nullable=False, default=True)
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
 
     reports_submitted = relationship(
