@@ -40,12 +40,8 @@ export default function Login() {
       toast.success(`Welcome back, ${data.user.full_name}`);
       navigate(homeForRole(data.user.role), { replace: true });
     } catch (err: any) {
-      if (!err.response) {
-        toast.error("Cannot reach the server. Please ensure the backend is running on http://127.0.0.1:8000");
-      } else {
-        const msg = err.response?.data?.detail || t("error_generic");
-        toast.error(msg);
-      }
+      const msg = err.response?.data?.detail || "Invalid login credentials";
+      toast.error(msg);
     } finally {
       setBusy(false);
     }
