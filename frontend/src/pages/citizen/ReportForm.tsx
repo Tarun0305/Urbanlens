@@ -117,8 +117,8 @@ export default function ReportForm() {
 
   const startSpeech = () => {
     const W = window as unknown as {
-      webkitSpeechRecognition?: new () => SpeechRecognition;
-      SpeechRecognition?: new () => SpeechRecognition;
+      webkitSpeechRecognition?: new () => any;
+      SpeechRecognition?: new () => any;
     };
     const Ctor = W.SpeechRecognition || W.webkitSpeechRecognition;
     if (!Ctor) {
@@ -129,7 +129,7 @@ export default function ReportForm() {
     rec.lang = "en-IN";
     rec.continuous = false;
     rec.interimResults = false;
-    rec.onresult = (ev: SpeechRecognitionEvent) => {
+    rec.onresult = (ev: any) => {
       const text = ev.results[0]?.[0]?.transcript || "";
       setDescription((d) => (d ? `${d}\n${text}` : text));
       setSpeechActive(false);

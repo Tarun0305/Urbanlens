@@ -54,3 +54,5 @@ export async function fetchLeaderboard(limit = 20) {
   });
   return data;
 }
+
+export type { User, UserRole };

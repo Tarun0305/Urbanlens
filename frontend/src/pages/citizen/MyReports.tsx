@@ -12,7 +12,6 @@ import { RatingStars } from "../../components/RatingStars";
 
 export default function MyReports() {
   const { t } = useTranslation();
-  const user = useAuthStore((s) => s.user);
   const [params] = useSearchParams();
   const focus = Number(params.get("focus") || "0");
 
