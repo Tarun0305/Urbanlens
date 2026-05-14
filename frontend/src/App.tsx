@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { AppLayout } from "./layouts/AppLayout";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Leaderboard from "./pages/Leaderboard";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
 import CitizenDashboard from "./pages/citizen/Dashboard";
