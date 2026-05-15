@@ -20,7 +20,7 @@ export default function ProgressUpload() {
     void (async () => {
       try {
         const r = await fetchReports();
-        setTasks(r.filter((x) => x.status === "assigned" || x.status === "in_progress"));
+        setTasks(r.filter((x: Report) => x.status === "assigned" || x.status === "in_progress"));
       } catch {
         setTasks([]);
       }

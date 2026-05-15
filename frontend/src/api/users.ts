@@ -1,43 +1,19 @@
+import { api } from "./client";
 import { User, UserRole } from "./auth_types";
 
-const getLocalUsers = (): User[] => {
-  const saved = localStorage.getItem("urbanlens_mock_users");
-  return saved ? JSON.parse(saved) : [];
-};
-
-const saveLocalUsers = (users: User[]) => {
-  localStorage.setItem("urbanlens_mock_users", JSON.stringify(users));
-};
-
 export async function fetchUsers(filters?: { role?: string; q?: string }) {
-  let users = getLocalUsers();
-  if (filters?.role) {
-    users = users.filter((u) => u.role === filters.role);
-  }
-  if (filters?.q) {
-    const q = filters.q.toLowerCase();
-    users = users.filter((u) => u.full_name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q));
-  }
-  return users;
+  const { data } = await api.get<User[]>("/api/users", { params: filters });
+  return data;
 }
 
 export async function createUser(payload: any) {
-  const users = getLocalUsers();
-  const newUser = { ...payload, id: Date.now(), points: 0, rating: 0, is_active: true, is_approved: true, created_at: new Date().toISOString() };
-  users.push(newUser);
-  saveLocalUsers(users);
-  return newUser;
+  const { data } = await api.post<User>("/api/users", payload);
+  return data;
 }
 
 export async function updateUser(id: number, payload: Partial<User>) {
-  const users = getLocalUsers();
-  const idx = users.findIndex(u => u.id === id);
-  if (idx > -1) {
-    users[idx] = { ...users[idx], ...payload };
-    saveLocalUsers(users);
-    return users[idx];
-  }
-  throw new Error("User not found");
+  const { data } = await api.put<User>(`/api/users/${id}`, payload);
+  return data;
 }
 
 export async function deactivateUser(id: number) {
@@ -49,11 +25,12 @@ export async function approveUser(id: number) {
 }
 
 export async function fetchLeaderboard(limit = 10) {
-  const users = getLocalUsers().filter(u => u.role === "contractor" && u.is_approved);
-  return users.sort((a, b) => b.points - a.points).slice(0, limit).map((u, i) => ({
+  const { data } = await api.get<any[]>("/api/analytics/leaderboard", { params: { limit } });
+  return data.map((u, i) => ({
     ...u,
     rank: i + 1,
     rating_display: u.rating,
+    combined_score: u.points,
     jobs_completed: Math.floor(u.points / 10)
   }));
 }

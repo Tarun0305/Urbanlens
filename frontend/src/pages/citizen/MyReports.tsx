@@ -30,7 +30,7 @@ export default function MyReports() {
       );
       setReports(data);
       if (focus && !selected) {
-        const hit = data.find((r) => r.id === focus);
+        const hit = data.find((r: Report) => r.id === focus);
         if (hit) {
           setSelected(hit);
         }

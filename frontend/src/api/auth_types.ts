@@ -13,5 +13,6 @@ export interface User {
   is_active: boolean;
   is_approved: boolean;
   achievements?: string;
+  combined_score?: number;
   created_at: string;
 }

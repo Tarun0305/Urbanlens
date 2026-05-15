@@ -43,6 +43,8 @@ export async function listReports(params?: { status?: string; category?: string 
   return data;
 }
 
+export const fetchReports = listReports;
+
 export async function getReport(id: number) {
   const { data } = await api.get<Report>(`/api/reports/${id}`);
   return data;

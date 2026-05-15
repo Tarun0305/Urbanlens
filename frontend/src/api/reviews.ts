@@ -23,3 +23,5 @@ export async function createReview(payload: any) {
   localStorage.setItem("urbanlens_mock_reviews", JSON.stringify(all));
   return newReview;
 }
+
+export const postReview = createReview;
