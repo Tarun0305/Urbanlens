@@ -1,9 +1,9 @@
 import axios from "axios";
 
-export const BASE_URL = "https://urbanlens-techno.railway.app";
+export const BASE_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 
 export const api = axios.create({
-  baseURL: BASE_URL || undefined,
+  baseURL: BASE_URL,
   headers: { "Content-Type": "application/json" },
 });
 
@@ -18,6 +18,16 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (res) => res,
   (err) => {
+    if (!err.response) {
+      // Meaningful message if backend is unreachable
+      return Promise.reject({
+        response: {
+          data: {
+            detail: "Cannot reach the server. Please ensure the backend is running on " + BASE_URL
+          }
+        }
+      });
+    }
     if (err.response?.status === 401) {
       localStorage.removeItem("urbanlens_token");
       localStorage.removeItem("urbanlens_user");

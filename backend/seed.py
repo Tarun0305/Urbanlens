@@ -39,6 +39,10 @@ def run():
         for full_name, email, phone, role in users:
             existing = db.query(User).filter(User.email == email).first()
             if existing:
+                # Update password and role to ensure it's correct
+                existing.password_hash = get_password_hash("password123" if email != "admin@urbanlens.com" else "Admin@123")
+                existing.role = role
+                existing.is_approved = True
                 continue
             db.add(
                 User(

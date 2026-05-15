@@ -5,7 +5,7 @@ export interface Report {
   title: string;
   description: string;
   category: string;
-  status: string;
+  status: "pending" | "ai_verified" | "assigned" | "in_progress" | "done" | "rejected";
   citizen_id: number;
   assigned_contractor_id: number | null;
   assigned_by_id: number | null;
@@ -14,14 +14,40 @@ export interface Report {
   address: string | null;
   area: string | null;
   road_name: string | null;
-  severity: "low" | "medium" | "high";
-  status: "pending" | "ai_verified" | "assigned" | "in_progress" | "done" | "rejected";
-  lat: number;
-  lng: number;
-  address: string;
+  cross_street: string | null;
+  ai_verified: boolean;
+  ai_confidence: number;
+  ai_result: string | null;
   image_url: string | null;
-  needs_review: boolean;
+  video_url: string | null;
+  severity: "low" | "medium" | "high";
+  estimated_cost: number | null;
+  work_start_date: string | null;
+  work_end_date: string | null;
+  workforce_count: number | null;
   created_at: string;
+  updated_at: string;
+  resolved_at: string | null;
+  citizen_name?: string | null;
+  contractor_name?: string | null;
+  contractor_rating?: number | null;
+}
+
+export async function createReport(payload: any) {
+  const { data } = await api.post<Report>("/api/reports", payload);
+  return data;
+}
+
+export async function listReports(params?: { status?: string; category?: string }) {
+  const { data } = await api.get<Report[]>("/api/reports", { params });
+  return data;
+}
+
+export async function getReport(id: number) {
+  const { data } = await api.get<Report>(`/api/reports/${id}`);
+  return data;
+}
+
 export async function assignReport(
   id: number,
   body: {
@@ -60,7 +86,7 @@ export async function uploadReportImage(file: File, category: string) {
 export function mediaUrl(path: string | null | undefined) {
   if (!path) return "";
   if (path.startsWith("http")) return path;
-  const base = import.meta.env.VITE_API_URL?.trim() || "";
+  const base = import.meta.env.VITE_API_URL?.trim() || "http://127.0.0.1:8000";
   if (base) return `${base.replace(/\/$/, "")}${path}`;
   return path;
 }
