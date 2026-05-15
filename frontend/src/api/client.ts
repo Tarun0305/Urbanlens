@@ -1,6 +1,10 @@
 import axios from "axios";
 
-const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+const isLocal = typeof window !== 'undefined' && 
+  (window.location.hostname === 'localhost' || 
+   window.location.hostname === '127.0.0.1' || 
+   window.location.port === '5173');
+
 export const BASE_URL = import.meta.env.VITE_API_URL || (isLocal ? "http://127.0.0.1:8000" : "");
 
 export const getMediaUrl = (path) => {
