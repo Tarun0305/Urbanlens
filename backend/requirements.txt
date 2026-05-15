@@ -9,4 +9,5 @@ aiofiles
 httpx
 pillow
 openai
+google-generativeai
 python-dotenv
