@@ -1,19 +1,7 @@
 import axios from "axios";
 
-const isLocal = typeof window !== 'undefined' && 
-  (window.location.hostname === 'localhost' || 
-   window.location.hostname === '127.0.0.1' || 
-   window.location.port === '5173');
-
-export const BASE_URL = import.meta.env.VITE_API_URL || (isLocal ? "http://127.0.0.1:8000" : "");
-
-export const getMediaUrl = (path) => {
-  if (!path) return "";
-  if (path.startsWith("http")) return path;
-  const base = import.meta.env.VITE_MEDIA_URL?.trim() || BASE_URL;
-  if (base) return `${base.replace(/\/$/, "")}${path.startsWith("/") ? path : `/${path}`}`;
-  return path.startsWith("/") ? path : `/${path}`;
-};
+export const BASE_URL =
+  import.meta.env.VITE_API_URL || "https://urbanlens-techno.railway.app";
 
 export const api = axios.create({
   baseURL: BASE_URL,
@@ -35,7 +23,7 @@ api.interceptors.response.use(
       return Promise.reject({
         response: {
           data: {
-            detail: "Cannot reach the server. Please ensure the backend is running on " + BASE_URL
+            detail: "Service temporarily unavailable. Please try again."
           }
         }
       });

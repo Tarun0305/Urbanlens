@@ -88,8 +88,7 @@ export async function uploadReportImage(file: File, category: string) {
 export function mediaUrl(path: string | null | undefined) {
   if (!path) return "";
   if (path.startsWith("http")) return path;
-  const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
-  const base = import.meta.env.VITE_API_URL?.trim() || (isLocal ? "http://127.0.0.1:8000" : "");
+  const base = import.meta.env.VITE_API_URL || "https://urbanlens-techno.railway.app";
   if (base) return `${base.replace(/\/$/, "")}${path}`;
   return path;
 }
