@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
-import { fetchContractorReviews } from "../../api/reviews";
+import { fetchContractorReviews, type Review } from "../../api/reviews";
 import { fetchUsers, approveUser, type User } from "../../api/users";
 
 export default function ContractorBoard() {
@@ -177,7 +177,7 @@ export default function ContractorBoard() {
                 </div>
               )}
               <div className="mt-4 space-y-3">
-                {reviews.map((rv: { id: string; reviewer_role: string; rating: number; comment: string; created_at: string }) => (
+                {reviews.map((rv: Review) => (
                   <div
                     key={rv.id}
                     className="rounded-2xl border border-slate-100 bg-white p-4 dark:border-white/10 dark:bg-slate-900/50"
