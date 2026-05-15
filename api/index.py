@@ -5,8 +5,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from .database import Base, engine
-from .routers import (
+from backend.database import Base, engine
+from backend.routers import (
     analytics_router,
     auth_router,
     notifications_router,
