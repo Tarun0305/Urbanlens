@@ -1,5 +1,10 @@
 from contextlib import asynccontextmanager
 from pathlib import Path
+import os
+import sys
+
+# Add the project root to sys.path for Vercel deployment
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
