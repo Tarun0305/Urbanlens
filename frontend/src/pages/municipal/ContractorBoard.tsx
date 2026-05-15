@@ -177,7 +177,7 @@ export default function ContractorBoard() {
                 </div>
               )}
               <div className="mt-4 space-y-3">
-                {reviews.map((rv) => (
+                {reviews.map((rv: { id: string; reviewer_role: string; rating: number; comment: string; created_at: string }) => (
                   <div
                     key={rv.id}
                     className="rounded-2xl border border-slate-100 bg-white p-4 dark:border-white/10 dark:bg-slate-900/50"
