@@ -30,16 +30,7 @@ import os
 
 app = FastAPI(title="UrbanLens API", lifespan=lifespan)
 
-env_origins = os.getenv("ALLOWED_ORIGINS")
-if env_origins:
-    origins = [origin.strip() for origin in env_origins.split(",") if origin.strip()]
-else:
-    origins = [
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "https://urbanlens-techno.vercel.app",
-        "https://urbanlens-sandy.vercel.app",
-    ]
+origins = ["*"]  # Allow all origins for hackathon production stability
 
 app.add_middleware(
     CORSMiddleware,
