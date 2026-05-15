@@ -138,7 +138,8 @@ export default function ReportForm() {
     rec.continuous = false;
     rec.interimResults = false;
     rec.onresult = (ev: any) => {
-      const text = ev.results[0]?.[0]?.transcript || "";
+      const result = ev.results[0];
+      const text = result ? result[0].transcript : "";
       setDescription((d) => (d ? `${d}\n${text}` : text));
       setSpeechActive(false);
     };
@@ -523,7 +524,7 @@ export default function ReportForm() {
 
             {aiOk !== null ? (
               <AIResultCard
-                ok={aiOk}
+                ok={!!aiOk}
                 confidence={aiConfidence}
                 category={aiCategory}
                 reason={aiReason}
