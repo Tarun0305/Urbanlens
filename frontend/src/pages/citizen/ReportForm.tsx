@@ -49,7 +49,7 @@ function LocateClick({ onPick }: { onPick: (lat: number, lng: number) => void })
 }
 
 export default function ReportForm() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
 
@@ -125,8 +125,16 @@ export default function ReportForm() {
       toast.error(t("speech_unsupported"));
       return;
     }
+
     const rec = new Ctor();
-    rec.lang = "en-IN";
+    
+    const langMap: Record<string, string> = {
+      en: "en-IN",
+      kn: "kn-IN",
+      hi: "hi-IN",
+    };
+    rec.lang = langMap[i18n.language] || "en-IN";
+
     rec.continuous = false;
     rec.interimResults = false;
     rec.onresult = (ev: any) => {
@@ -190,6 +198,8 @@ export default function ReportForm() {
         setTitle(`${category.toUpperCase()} near ${geo?.area || "reported location"}`);
       }
       toast.success("Image verified");
+      // Auto-advance to details step for faster flow
+      setTimeout(() => setStep(4), 1200);
     } catch (e: unknown) {
       setAiOk(false);
       const msg =
@@ -470,8 +480,24 @@ export default function ReportForm() {
               <div className="text-sm font-bold text-primary">{t("loading")}</div>
             ) : null}
             {imageFile ? (
-              <div className="text-xs font-bold text-slate-600">
-                Selected: {imageFile.name}
+              <div className="space-y-2">
+                <div className="text-xs font-bold text-slate-600">
+                  Selected: {imageFile.name}
+                </div>
+                <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 dark:border-white/10 dark:bg-slate-900">
+                  <img
+                    src={URL.createObjectURL(imageFile)}
+                    alt="Preview"
+                    className="h-full w-full object-cover"
+                  />
+                  {uploadBusy && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+                      <div className="text-sm font-black text-white animate-pulse">
+                        Analyzing legitimacy...
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             ) : null}
 

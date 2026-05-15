@@ -39,7 +39,14 @@ export function IssueCard({
             </span>
           </div>
         </div>
-        <StatusBadge status={report.status} />
+        <div className="flex flex-col items-end gap-2">
+          <StatusBadge status={report.status} />
+          {report.ai_verified && (
+            <div className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-1 text-[9px] font-black uppercase tracking-widest text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400">
+              <span className="text-[10px]">✨</span> AI Verified
+            </div>
+          )}
+        </div>
       </div>
       {report.image_url ? (
         <div className="mt-4 overflow-hidden rounded-xl border border-white/20">

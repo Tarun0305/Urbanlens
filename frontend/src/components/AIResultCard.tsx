@@ -31,7 +31,13 @@ export function AIResultCard({
         )}
         <div className="min-w-0 flex-1">
           <div className="font-display text-lg font-extrabold text-slate-900 dark:text-white">
-            {ok ? t("ai_verified") : t("ai_rejected")}
+            {ok ? "Legitimacy Verified" : t("ai_rejected")}
+          </div>
+          <div className="mt-1 flex items-center gap-2">
+            <div className={`h-2 w-2 rounded-full ${ok ? 'bg-accent animate-pulse' : 'bg-danger'}`} />
+            <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+              {ok ? "Real-world issue detected" : "Failed legitimacy check"}
+            </span>
           </div>
           <div className="mt-2 text-sm text-slate-600 dark:text-slate-300">{reason}</div>
           {category ? (
