@@ -31,8 +31,6 @@ async def lifespan(app: FastAPI):
     yield
 
 
-import os
-
 app = FastAPI(title="UrbanLens API", lifespan=lifespan)
 
 env_origins = os.getenv("ALLOWED_ORIGINS")
@@ -56,6 +54,7 @@ app.add_middleware(
 )
 
 upload_root = Path(__file__).resolve().parent.parent / "uploads"
+upload_root.mkdir(parents=True, exist_ok=True)
 app.mount("/uploads", StaticFiles(directory=str(upload_root)), name="uploads")
 
 app.include_router(auth_router.router, prefix="/api/auth", tags=["auth"])

@@ -17,15 +17,17 @@ export async function updateUser(id: number, payload: Partial<User>) {
 }
 
 export async function deactivateUser(id: number) {
-  return updateUser(id, { is_active: false });
+  const { data } = await api.delete(`/api/users/${id}`);
+  return data;
 }
 
 export async function approveUser(id: number) {
-  return updateUser(id, { is_approved: true });
+  const { data } = await api.patch(`/api/users/${id}/approve`);
+  return data;
 }
 
 export async function fetchLeaderboard(limit = 10) {
-  const { data } = await api.get<any[]>("/api/analytics/leaderboard", { params: { limit } });
+  const { data } = await api.get<any[]>("/api/users/leaderboard", { params: { limit } });
   return data.map((u, i) => ({
     ...u,
     rank: i + 1,

@@ -10,3 +10,4 @@ httpx
 pillow
 openai
 python-dotenv
+google-generativeai

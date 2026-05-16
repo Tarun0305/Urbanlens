@@ -1,3 +1,5 @@
+import { api } from "./client";
+
 export interface Review {
   id: number;
   report_id: number;
@@ -10,18 +12,13 @@ export interface Review {
 }
 
 export async function fetchContractorReviews(contractorId: number) {
-  const saved = localStorage.getItem("urbanlens_mock_reviews");
-  const all = saved ? JSON.parse(saved) : [];
-  return all.filter((r: Review) => r.contractor_id === contractorId);
+  const { data } = await api.get(`/api/reviews/contractor/${contractorId}`);
+  return data;
 }
 
 export async function createReview(payload: any) {
-  const saved = localStorage.getItem("urbanlens_mock_reviews");
-  const all = saved ? JSON.parse(saved) : [];
-  const newReview = { ...payload, id: Date.now(), created_at: new Date().toISOString() };
-  all.push(newReview);
-  localStorage.setItem("urbanlens_mock_reviews", JSON.stringify(all));
-  return newReview;
+  const { data } = await api.post("/api/reviews", payload);
+  return data;
 }
 
 export const postReview = createReview;

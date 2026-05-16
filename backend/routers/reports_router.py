@@ -1,7 +1,5 @@
-import base64
 import json
 import os
-import re
 import uuid
 from datetime import datetime
 from pathlib import Path
@@ -20,7 +18,7 @@ from fastapi import (
 import google.generativeai as genai
 from PIL import Image
 from PIL.ExifTags import GPSTAGS, TAGS
-from sqlalchemy import or_
+from sqlalchemy import func, or_
 from sqlalchemy.orm import Session
 
 from ..auth import get_current_user, require_roles
