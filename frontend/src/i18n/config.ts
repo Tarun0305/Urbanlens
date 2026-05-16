@@ -1,8 +1,8 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import en from "./en.json";
-import kn from "./kn.json";
-import hi from "./hi.json";
+import * as en from "./en.json";
+import * as kn from "./kn.json";
+import * as hi from "./hi.json";
 
 const saved =
   (typeof localStorage !== "undefined" && localStorage.getItem("urbanlens_lang")) ||

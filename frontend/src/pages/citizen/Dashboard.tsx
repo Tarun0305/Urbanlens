@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
-import L from "leaflet";
+import * as L from "leaflet";
 import { Camera, Sparkles } from "lucide-react";
 import { fetchNotifications, type NotificationItem } from "../../api/notifications";
 import { fetchReports, type Report } from "../../api/reports";
