@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MapContainer, Marker, TileLayer, useMapEvents } from "react-leaflet";
-import L from "leaflet";
+import * as L from "leaflet";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import confetti from "canvas-confetti";
+import * as confetti from "canvas-confetti";
 import { Mic, UploadCloud } from "lucide-react";
 import { AIResultCard } from "../../components/AIResultCard";
 import { createReport, uploadReportImage } from "../../api/reports";
@@ -127,7 +127,7 @@ export default function ReportForm() {
     }
 
     const rec = new Ctor();
-    
+
     const langMap: Record<string, string> = {
       en: "en-IN",
       kn: "kn-IN",
@@ -254,11 +254,10 @@ export default function ReportForm() {
             key={s}
             type="button"
             onClick={() => setStep(s)}
-            className={`rounded-full px-4 py-2 text-xs font-black uppercase tracking-widest ${
-              step === s
-                ? "bg-gradient-to-r from-primary to-accent text-white shadow-lg"
-                : "border border-slate-200 bg-white/70 text-slate-700 dark:border-white/10 dark:bg-slate-950/50 dark:text-slate-200"
-            }`}
+            className={`rounded-full px-4 py-2 text-xs font-black uppercase tracking-widest ${step === s
+              ? "bg-gradient-to-r from-primary to-accent text-white shadow-lg"
+              : "border border-slate-200 bg-white/70 text-slate-700 dark:border-white/10 dark:bg-slate-950/50 dark:text-slate-200"
+              }`}
           >
             {s}.{" "}
             {s === 1
@@ -321,13 +320,13 @@ export default function ReportForm() {
                           g
                             ? { ...g, area: e.target.value }
                             : {
-                                lat: latLng[0],
-                                lng: latLng[1],
-                                address: "",
-                                area: e.target.value,
-                                road_name: "",
-                                cross_street: "",
-                              }
+                              lat: latLng[0],
+                              lng: latLng[1],
+                              address: "",
+                              area: e.target.value,
+                              road_name: "",
+                              cross_street: "",
+                            }
                         )
                       }
                       className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm dark:border-white/10 dark:bg-slate-950 dark:text-white"
@@ -342,13 +341,13 @@ export default function ReportForm() {
                           g
                             ? { ...g, road_name: e.target.value }
                             : {
-                                lat: latLng[0],
-                                lng: latLng[1],
-                                address: "",
-                                area: "",
-                                road_name: e.target.value,
-                                cross_street: "",
-                              }
+                              lat: latLng[0],
+                              lng: latLng[1],
+                              address: "",
+                              area: "",
+                              road_name: e.target.value,
+                              cross_street: "",
+                            }
                         )
                       }
                       className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm dark:border-white/10 dark:bg-slate-950 dark:text-white"
@@ -363,13 +362,13 @@ export default function ReportForm() {
                           g
                             ? { ...g, cross_street: e.target.value }
                             : {
-                                lat: latLng[0],
-                                lng: latLng[1],
-                                address: "",
-                                area: "",
-                                road_name: "",
-                                cross_street: e.target.value,
-                              }
+                              lat: latLng[0],
+                              lng: latLng[1],
+                              address: "",
+                              area: "",
+                              road_name: "",
+                              cross_street: e.target.value,
+                            }
                         )
                       }
                       className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm dark:border-white/10 dark:bg-slate-950 dark:text-white"
@@ -430,11 +429,10 @@ export default function ReportForm() {
                 key={c.id}
                 type="button"
                 onClick={() => setCategory(c.id)}
-                className={`rounded-[2rem] border p-6 text-left shadow-lg transition ${
-                  category === c.id
-                    ? "border-primary bg-primary/10 ring-4 ring-primary/20"
-                    : "border-white/20 bg-white/70 hover:-translate-y-1 dark:border-white/10 dark:bg-slate-950/60"
-                }`}
+                className={`rounded-[2rem] border p-6 text-left shadow-lg transition ${category === c.id
+                  ? "border-primary bg-primary/10 ring-4 ring-primary/20"
+                  : "border-white/20 bg-white/70 hover:-translate-y-1 dark:border-white/10 dark:bg-slate-950/60"
+                  }`}
               >
                 <div className="text-4xl">{c.emoji}</div>
                 <div className="mt-3 font-display text-xl font-black text-slate-900 dark:text-white">
@@ -595,11 +593,10 @@ export default function ReportForm() {
                     key={s}
                     type="button"
                     onClick={() => setSeverity(s)}
-                    className={`rounded-full px-4 py-2 text-xs font-black uppercase tracking-widest ${
-                      severity === s
-                        ? "bg-accent text-white"
-                        : "border border-slate-200 bg-white dark:border-white/10 dark:bg-slate-950 dark:text-white"
-                    }`}
+                    className={`rounded-full px-4 py-2 text-xs font-black uppercase tracking-widest ${severity === s
+                      ? "bg-accent text-white"
+                      : "border border-slate-200 bg-white dark:border-white/10 dark:bg-slate-950 dark:text-white"
+                      }`}
                   >
                     {s}
                   </button>
